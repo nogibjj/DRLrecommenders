@@ -16,7 +16,7 @@ if __name__ == '__main__':
     args = parse_args()
 
     data_directory = args.data
-    replay_buffer_behavior = pd.read_pickle(os.path.join(data_directory, 'sampled_sessions.df'))
+    replay_buffer_behavior = pd.read_pickle(os.path.join(data_directory, 'sorted_events.df'))
     total_actions=replay_buffer_behavior.shape[0]
     pop_dict={}
     for index, row in replay_buffer_behavior.iterrows():

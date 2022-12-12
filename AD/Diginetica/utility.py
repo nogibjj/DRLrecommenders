@@ -76,20 +76,6 @@ def calculate_hit(sorted_list,topk,true_items,rewards,r_click,total_reward,hit_c
                     ndcg_purchase[i] += 1.0 / np.log2(rank + 1)
 
 
-def calculate_hit_single(sorted_list,topk,true_items,hit,ndcg):
-    for i in range(len(topk)):
-        rec_list = sorted_list[:, -topk[i]:]
-        for j in range(len(true_items)):
-            if true_items[j] in rec_list[j]:
-                rank = topk[i] - np.argwhere(rec_list[j] == true_items[j])
-                # total_reward[i] += rewards[j]
-                # if rewards[j] == r_click:
-                hit[i] += 1.0
-                ndcg[i] += 1.0 / np.log2(rank + 1)
-                # else:
-                #     hit_purchase[i] += 1.0
-                #     ndcg_purchase[i] += 1.0 / np.log2(rank + 1)
-
 def calculate_off(sorted_list,true_items,rewards,reward_click,off_click_ng,off_purchase_ng,off_prob_click,off_prob_purchase,pop_dict,topk=10):
     rec_list = sorted_list[:, -topk:]
     for j in range(len(true_items)):

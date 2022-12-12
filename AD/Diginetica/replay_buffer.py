@@ -15,8 +15,8 @@ if __name__ == '__main__':
     length=FLAGS.history_length
 
     # reply_buffer = pd.DataFrame(columns=['state','action','reward','next_state','is_done'])
-    sampled_sessions=pd.read_pickle(os.path.join(data_directory, 'sampled_sessions.df'))
-    item_ids=sampled_sessions.item_id.unique()
+    sorted_events=pd.read_pickle(os.path.join(data_directory, 'sorted_events.df'))
+    item_ids=sorted_events.item_id.unique()
     pad_item=len(item_ids)
 
     train_sessions = pd.read_pickle(os.path.join(data_directory, 'sampled_train.df'))

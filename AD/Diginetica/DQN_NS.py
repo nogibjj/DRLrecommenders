@@ -12,7 +12,7 @@ import trfl
 from trfl import indexing_ops
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run nive double q learning.")
+    parser = argparse.ArgumentParser(description="Run double q learning.")
 
     parser.add_argument('--epoch', type=int, default=300,
                         help='Number of max epochs.')
@@ -30,14 +30,14 @@ def parse_args():
                         help='reward for the purchase behavior.')
     parser.add_argument('--r_negative', type=float, default=-1.0,
                         help='reward for the negative behavior.')
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.001,
                         help='Learning rate.')
     parser.add_argument('--discount', type=float, default=0.5,
                         help='Discount factor for RL.')
     parser.add_argument('--neg', type=int, default=10,
                         help='number of negative samples.')
-    # parser.add_argument('--weight', type=float, default=1.0,
-    #                     help='weight for the q-learning loss.')
+    parser.add_argument('--weight', type=float, default=1.0,
+                        help='number of negative samples.')
     parser.add_argument('--model', type=str, default='GRU',
                         help='the base recommendation models, including GRU,Caser,NItNet and SASRec')
     parser.add_argument('--num_filters', type=int, default=16,
@@ -47,6 +47,7 @@ def parse_args():
     parser.add_argument('--num_heads', default=1, type=int,help='number heads (for SASRec)')
     parser.add_argument('--num_blocks', default=1, type=int, help='number heads (for SASRec)')
     parser.add_argument('--dropout_rate', default=0.1, type=float)
+
 
     return parser.parse_args()
 
@@ -59,7 +60,7 @@ class QNetwork:
         self.item_num = int(item_num)
         self.pretrain = pretrain
         self.neg=args.neg
-        # self.weight=args.weight
+        self.weight=args.weight
         self.model=args.model
         self.is_training = tf.placeholder(tf.bool, shape=())
         # self.save_file = save_file
@@ -279,6 +280,8 @@ def evaluate(sess):
     while evaluated<len(eval_ids):
         states, len_states, actions, rewards = [], [], [], []
         for i in range(batch):
+            if evaluated==len(eval_ids):
+                break
             id=eval_ids[evaluated]
             group=groups.get_group(id)
             history=[]

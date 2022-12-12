@@ -30,7 +30,7 @@ def parse_args():
                         help='reward for the purchase behavior.')
     parser.add_argument('--r_negative', type=float, default=-0.0,
                         help='reward for the negative behavior.')
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.005,
                         help='Learning rate.')
     parser.add_argument('--discount', type=float, default=0.5,
                         help='Discount factor for RL.')
@@ -44,7 +44,7 @@ def parse_args():
                         help='clip value for advantage')
     parser.add_argument('--lr_2', type=float, default=0.001,
                         help='Learning rate.')
-    parser.add_argument('--model', type=str, default='GRU',
+    parser.add_argument('--model', type=str, default='NItNet',
                         help='the base recommendation models, including GRU,Caser,NItNet and SASRec')
     parser.add_argument('--num_filters', type=int, default=16,
                         help='Number of filters per filter size (default: 16) (for Caser)')
@@ -324,6 +324,8 @@ def evaluate(sess):
     while evaluated<len(eval_ids):
         states, len_states, actions, rewards = [], [], [], []
         for i in range(batch):
+            if evaluated==len(eval_ids):
+                break
             id=eval_ids[evaluated]
             group=groups.get_group(id)
             history=[]

@@ -12,7 +12,7 @@ import trfl
 from trfl import indexing_ops
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run nive double q learning.")
+    parser = argparse.ArgumentParser(description="Run double q learning.")
 
     parser.add_argument('--epoch', type=int, default=50,
                         help='Number of max epochs.')
@@ -30,14 +30,14 @@ def parse_args():
                         help='reward for the purchase behavior.')
     parser.add_argument('--r_negative', type=float, default=-0.0,
                         help='reward for the negative behavior.')
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.005,
                         help='Learning rate.')
     parser.add_argument('--discount', type=float, default=0.5,
                         help='Discount factor for RL.')
     parser.add_argument('--neg', type=int, default=10,
                         help='number of negative samples.')
     parser.add_argument('--weight', type=float, default=1.0,
-                        help='weight for the q-learning loss.')
+                        help='number of negative samples.')
     parser.add_argument('--model', type=str, default='GRU',
                         help='the base recommendation models, including GRU,Caser,NItNet and SASRec')
     parser.add_argument('--num_filters', type=int, default=16,
@@ -47,6 +47,7 @@ def parse_args():
     parser.add_argument('--num_heads', default=1, type=int,help='number heads (for SASRec)')
     parser.add_argument('--num_blocks', default=1, type=int, help='number heads (for SASRec)')
     parser.add_argument('--dropout_rate', default=0.1, type=float)
+
 
     return parser.parse_args()
 
@@ -279,6 +280,8 @@ def evaluate(sess):
     while evaluated<len(eval_ids):
         states, len_states, actions, rewards = [], [], [], []
         for i in range(batch):
+            if evaluated==len(eval_ids):
+                break
             id=eval_ids[evaluated]
             group=groups.get_group(id)
             history=[]
@@ -298,7 +301,7 @@ def evaluate(sess):
                 rewards.append(reward)
                 history.append(row['item_id'])
             evaluated+=1
-        prediction=sess.run(QN_1.output1, feed_dict={QN_1.inputs: states,QN_1.len_state:len_states,QN_1.is_training:False})
+        prediction=sess.run(QN_1.output2, feed_dict={QN_1.inputs: states,QN_1.len_state:len_states,QN_1.is_training:False})
         sorted_list=np.argsort(prediction)
         calculate_hit(sorted_list,topk,actions,rewards,reward_click,total_reward,hit_clicks,ndcg_clicks,hit_purchase,ndcg_purchase)
     print('#############################################################')
@@ -344,7 +347,7 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         # Initialize variables
         sess.run(tf.global_variables_initializer())
-        # evaluate(sess)
+        evaluate(sess)
         num_rows=replay_buffer.shape[0]
         num_batches=int(num_rows/args.batch_size)
         for i in range(args.epoch):
