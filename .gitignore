@@ -2,6 +2,7 @@
 .DS_Store
 ignore/
 data/
+dnn/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
